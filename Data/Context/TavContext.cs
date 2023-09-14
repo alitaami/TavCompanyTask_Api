@@ -1,4 +1,5 @@
-﻿using Entities.Models.Roles;
+﻿using Entities.Models;
+using Entities.Models.Roles;
 using Entities.Models.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -17,6 +18,7 @@ public class TavContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<UserRoles> UserRoles { get; set; }
     public DbSet<NewsReceiver> NewsReceivers { get; set; }
+    public DbSet<EmailRecord> EmailRecords { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

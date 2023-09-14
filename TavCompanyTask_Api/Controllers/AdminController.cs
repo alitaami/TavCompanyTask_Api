@@ -51,9 +51,9 @@ namespace TavCompanyTask_Api.Controllers
         [ProducesResponseType(typeof(Ok), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiResult), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ApiResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> SendEmailForReceivers([FromBody] EmailRequest request)
+        public async Task<IActionResult> SendEmailForReceivers([FromBody] EmailRequest request,CancellationToken cancellationToken)
         {
-            var result = await _adminService.SendEmailInBackground(request.Subject, request.Body);
+            var result = await _adminService.SendEmailInBackground(request.Subject, request.Body,cancellationToken);
             return APIResponse(result);
         }
 

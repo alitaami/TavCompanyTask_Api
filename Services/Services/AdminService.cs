@@ -67,7 +67,7 @@ namespace Services.Services
 
             }
         }
-        public async Task<ServiceResult> SendEmailInBackground(string subject, string body)
+        public async Task<ServiceResult> SendEmailInBackground(string subject, string body,CancellationToken cancellationToken)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace Services.Services
                 if (users.Result.Count == 0)
                     return BadRequest(ErrorCodeEnum.BadRequest, Resource.NewsReceiverError, null);///
 
-                await _backgroundJobsService.SendEmailsToUsersInBackground(subject, body);
+                await _backgroundJobsService.SendEmailsToUsersInBackground(subject, body,cancellationToken);
 
                 return Ok(Resource.EmailsSent);
             }
