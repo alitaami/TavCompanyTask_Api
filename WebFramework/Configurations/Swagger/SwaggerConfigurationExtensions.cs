@@ -41,7 +41,7 @@ namespace WebFramework.Configuration.Swagger
                 //options.InjectJavascript("/ext/custom-javascript.js");
                 //options.RoutePrefix = "api-docs";
                 #endregion
-
+                options.DisplayRequestDuration();
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
             });
         }
