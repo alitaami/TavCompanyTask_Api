@@ -6,6 +6,8 @@ using Entities.Models;
 using Entities.Models.User;
 using Hangfire;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Retry;
 using Services.Services.Interface;
 using System;
 using System.Collections.Generic;
@@ -21,9 +23,9 @@ namespace Services.Services
         private readonly IRepository<EmailRecord> _RepoEmail;
         private readonly SendMail _sendMail;
 
-        public BackgroundJobsService(SendMail sendMail,IRepository<EmailRecord> repoEmail, ILogger<BackgroundJobsService> logger, IUserService userService) : base(logger)
+        public BackgroundJobsService(SendMail sendMail, IRepository<EmailRecord> repoEmail, ILogger<BackgroundJobsService> logger, IUserService userService) : base(logger)
         {
-            _sendMail  = sendMail;
+            _sendMail = sendMail;
             _userService = userService;
             _RepoEmail = repoEmail;
         }
@@ -32,45 +34,47 @@ namespace Services.Services
         {
             try
             {
-                // Create a dictionary to store user IDs and their corresponding emails.
-                Dictionary<int, string> usersData = new Dictionary<int, string>();
+                // Split the list of receptionists into smaller batches.
+                var batchSize = 100; // Adjust the batch size as needed.
+                var batches = receptionists.Batch(batchSize);
 
-                // Iterate through the list of receptionists.
-                foreach (int userId in receptionists)
+                foreach (var batch in batches)
                 {
-                    // Check if the user's email is already in the dictionary.
-                    if (!usersData.ContainsKey(userId))
-                    {
-                        // Retrieve the user's email by their ID.
-                        var user = await _userService.GetUserByUserId(userId);
+                    // Create a dictionary to store user IDs and their corresponding emails for this batch.
+                    var usersData = new Dictionary<int, string>();
 
-                        if (user != null)
+                    // Iterate through the list of receptionists in this batch.
+                    foreach (int userId in batch)
+                    {
+                        if (!usersData.ContainsKey(userId))
                         {
-                            // User exists, add their email to the dictionary.
-                            usersData.Add(userId, user.Email);
+                            var user = await _userService.GetUserByUserId(userId);
+
+                            if (user != null)
+                            {
+                                usersData.Add(userId, user.Email);
+                            }
                         }
                     }
+
+                    // Create email records for this batch.
+                    var emailRecords = usersData.Values.Select(email => new EmailRecord
+                    {
+                        RecipientEmail = email,
+                        Subject = subject,
+                        Body = body,
+                        SentTime = DateTime.UtcNow,
+                        SeenTime = null
+                    }).ToList();
+
+                    // Add email records to the database.
+                    await _RepoEmail.AddRangeAsync(emailRecords, cancellationToken);
+
+                    // Enqueue the email sending tasks for this batch asynchronously.
+                    var emailSendingTasks = usersData
+                                           .Values.Select(userEmail =>
+                                            BackgroundJob.Enqueue(() => SendEmailAsync(userEmail, subject, body)));
                 }
-
-                // Create a list of email records based on the user emails.
-                var emailRecords = usersData.Values.Select(email => new EmailRecord
-                {
-                    RecipientEmail = email,
-                    Subject = subject,
-                    Body = body,
-                    SentTime = DateTime.UtcNow,
-                    SeenTime = null
-                }).ToList();
-
-                // Add email records to the database.
-                await _RepoEmail.AddRangeAsync(emailRecords, cancellationToken);
-
-                // Enqueue the email sending tasks for all users.
-                foreach (var userEmail in usersData.Values)
-                {
-                    BackgroundJob.Enqueue(() => SendEmailAsync(userEmail, subject, body));
-                }
-
                 // Return a successful response.
                 return Ok(Resource.EmailsSent);
             }
@@ -84,16 +88,27 @@ namespace Services.Services
 
         public async Task SendEmailAsync(string email, string subject, string body)
         {
-            try
-            {
-                await _sendMail.SendAsync(email, subject, body);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, null, null);
+            var retryPolicy = CreateRetryPolicy();
 
-                throw new Exception(Resource.GeneralErrorTryAgain);
-            }
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                try
+                {
+                    await _sendMail.SendAsync(email, subject, body);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, null, null);
+
+                    throw new Exception(Resource.GeneralErrorTryAgain);
+                }
+            });
+        }
+        private AsyncRetryPolicy CreateRetryPolicy()
+        {
+            return Policy
+                .Handle<Exception>() // Specify which exceptions to handle.
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
         }
     }
 }
