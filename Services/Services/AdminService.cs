@@ -36,9 +36,13 @@ namespace Services.Services
             try
             {
                 var check = _repoNR.TableNoTracking.Where(x => x.UserId == userId);
-
+                var check1 = _repo.TableNoTracking.Where(x => x.Id == userId);
+                 
                 if (check.Any())
-                    return BadRequest(ErrorCodeEnum.DuplicateError, Resource.AlreadyExists, null);
+                    return BadRequest(ErrorCodeEnum.DuplicateError, Resource.IsExists, null);
+                
+                if (!check1.Any())
+                    return BadRequest(ErrorCodeEnum.DuplicateError, Resource.NotFound, null);
 
                 var user = _userService.GetUserByUserId(userId);
 

@@ -9,7 +9,7 @@ namespace Common.Utilities
         {
             using (MailMessage mail = new MailMessage())
             {
-                mail.From = new MailAddress("prozheali@gmail.com", "سامانه املاک");
+                mail.From = new MailAddress("prozheali@gmail.com", "سامانه اطلاع رسانی تاو ");
                 mail.To.Add(to);
                 mail.Subject = subject;
                 mail.Body = body;

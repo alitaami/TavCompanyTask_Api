@@ -9,8 +9,7 @@ namespace Entities.ViewModels
 {
     public class UserViewModel
     {
-        
-        public int Id { get; set; }
+
         [Required]
         [StringLength(100)]
         public string UserName { get; set; }
@@ -31,5 +30,11 @@ namespace Entities.ViewModels
         public string FullName { get; set; }
         [Required]
         public int Age { get; set; }
+    }
+    public class JwtToken
+    {
+        [Required]
+        [StringLength(200)]
+        public string Token { get; set; }
     }
 }

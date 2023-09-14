@@ -120,7 +120,7 @@ namespace WebFramework.Configuration
             builder.Services.AddHangfireServer(); // This line starts the Hangfire background processing server
 
         }
-         
+
         private static void AddSwagger(WebApplicationBuilder builder)
         {
             Assert.NotNull(builder.Services, nameof(builder.Services));
@@ -194,7 +194,7 @@ namespace WebFramework.Configuration
                     {
                         Password = new OpenApiOAuthFlow
                         {
-                            TokenUrl = new Uri("https://localhost:7076/api/Account/Login"),
+                            TokenUrl = new Uri("https://localhost:7072/api/Account/Login"),
                             Scopes = new Dictionary<string, string>
             {
                 {"read", "Read access to protected resources."},
@@ -202,8 +202,8 @@ namespace WebFramework.Configuration
             }
                         }
                     }
-                });
 
+                }); 
                 #endregion
 
                 //#region Add Jwt Authentication
