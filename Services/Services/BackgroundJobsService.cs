@@ -69,11 +69,13 @@ namespace Services.Services
 
                     // Add email records to the database.
                     await _RepoEmail.AddRangeAsync(emailRecords, cancellationToken);
-
-                    // Enqueue the email sending tasks for this batch asynchronously.
-                    var emailSendingTasks = usersData
-                                           .Values.Select(userEmail =>
-                                            BackgroundJob.Enqueue(() => SendEmailAsync(userEmail, subject, body)));
+                    
+                    // Enqueue the email sending tasks for this batch using Hangfire.
+                    foreach (var userEmail in usersData.Values)
+                    {
+                        // Enqueue the task using Hangfire to send emails in the background.
+                        BackgroundJob.Enqueue(() => SendEmailAsync(userEmail, subject, body));
+                    }
                 }
                 // Return a successful response.
                 return Ok(Resource.EmailsSent);
