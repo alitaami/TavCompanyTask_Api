@@ -9,8 +9,8 @@ namespace Services.Services.Interface
 {
     public interface IAdminService
     {
-        public Task<ServiceResult> AddUsersToReceiverList(int userId, CancellationToken cancellationToken);
-        public Task<ServiceResult> SendEmailInBackground(string subject, string body, CancellationToken cancellationToken);
+        //public Task<ServiceResult> AddUsersToReceiverList(int userId, CancellationToken cancellationToken);
+        public Task<ServiceResult> SendEmailInBackground(string subject, string body,List<int> receptionists, CancellationToken cancellationToken);
 
     }
 }

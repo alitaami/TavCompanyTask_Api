@@ -17,7 +17,7 @@ public class TavContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<UserRoles> UserRoles { get; set; }
-    public DbSet<NewsReceiver> NewsReceivers { get; set; }
+    //public DbSet<NewsReceiver> NewsReceivers { get; set; }
     public DbSet<EmailRecord> EmailRecords { get; set; }
 
 
@@ -61,10 +61,10 @@ public class TavContext : DbContext
         );
 
         // Seed NewsReceivers
-        modelBuilder.Entity<NewsReceiver>().HasData(
-            new NewsReceiver { Id = 1, Email = "alitaami81@gmail.com", UserId = 1 },
-            new NewsReceiver { Id = 2, Email = "alitaamicr7@gmail.com", UserId = 2 }
-        );
+        //modelBuilder.Entity<NewsReceiver>().HasData(
+        //    new NewsReceiver { Id = 1, Email = "alitaami81@gmail.com", UserId = 1 },
+        //    new NewsReceiver { Id = 2, Email = "alitaamicr7@gmail.com", UserId = 2 }
+        //);
     }
 
 }

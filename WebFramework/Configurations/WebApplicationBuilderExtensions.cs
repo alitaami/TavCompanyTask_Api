@@ -3,6 +3,7 @@ using Common.Utilities;
 using Data.Repositories;
 using Entities.Models.Roles;
 using Entities.Models.User;
+using Entities.ViewModels;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -510,6 +511,8 @@ namespace WebFramework.Configuration
             builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddSingleton<SendMail>();
+            builder.Services.Configure<Common.Utilities.EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             //builder.Services.AddTransient<IMemoryService, MemoryService>();
             //builder.Services.AddTransient<ICountOnlineUsersService, CountOnlineUsersService>();
             //builder.Services.AddAutoMapper(typeof(WebApplication));

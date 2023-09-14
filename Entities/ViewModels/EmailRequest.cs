@@ -13,5 +13,7 @@ namespace Entities.ViewModels
         public string Subject { get; set; }
         [Required]
         public string Body { get; set; }
+        [Required]
+        public List<int> Recipients { get; set; }
     }
 }

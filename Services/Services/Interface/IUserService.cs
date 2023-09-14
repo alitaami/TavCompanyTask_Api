@@ -11,6 +11,6 @@ namespace Services.Services.Interface
     public interface IUserService
     {
         public Task<User> GetUserByUserId(int id);
-        public Task<List<NewsReceiver>> GetNewsUsers();
+        public Task<List<User>> GetUsers();
     }
 }

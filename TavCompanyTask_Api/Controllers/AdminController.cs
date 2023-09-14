@@ -27,21 +27,7 @@ namespace TavCompanyTask_Api.Controllers
         {
             _adminService = adminService;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpPost] 
-        [ProducesResponseType(typeof(Ok), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ApiResult), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ApiResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> AddUsersToReceiverList(int userId, CancellationToken cancellationToken)
-        {
-            var result = await _adminService.AddUsersToReceiverList(userId, cancellationToken);
-            return APIResponse(result);
-        }
+         
         /// <summary>
         /// 
         /// </summary>
@@ -52,8 +38,8 @@ namespace TavCompanyTask_Api.Controllers
         [ProducesResponseType(typeof(ApiResult), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ApiResult), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> SendEmailForReceivers([FromBody] EmailRequest request,CancellationToken cancellationToken)
-        {
-            var result = await _adminService.SendEmailInBackground(request.Subject, request.Body,cancellationToken);
+        {  
+            var result = await _adminService.SendEmailInBackground(request.Subject, request.Body, request.Recipients, cancellationToken);
             return APIResponse(result);
         }
 

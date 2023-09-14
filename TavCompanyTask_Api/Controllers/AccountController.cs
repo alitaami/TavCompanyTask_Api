@@ -10,10 +10,10 @@ using System.Net.Mime;
 
 namespace TavCompanyTask_Api.Controllers
 {
-    [AllowAnonymous]
     /// <summary>
     /// Controller for Login and SignUp operations
     /// </summary>
+    [AllowAnonymous]
     public class AccountController : APIControllerBase
     {
         private readonly IAccountService _accountService;
@@ -30,7 +30,7 @@ namespace TavCompanyTask_Api.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns> 
         /// 
-        [HttpPost] 
+        [HttpPost]
         [ProducesResponseType(typeof(JwtToken), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiResult), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ApiResult), (int)HttpStatusCode.InternalServerError)]

@@ -11,7 +11,7 @@ namespace Services.Services.Interface
 {
     public interface IBackgroundJobsService
     {
-        public Task<ServiceResult> SendEmailsToUsersInBackground(string subject, string body,CancellationToken cancellationToken);
+        public Task<ServiceResult> SendEmailsToUsersInBackground(string subject, string body, List<int> receptionists, CancellationToken cancellationToken);
         public Task SendEmailAsync(string email, string subject, string body);
 
     }

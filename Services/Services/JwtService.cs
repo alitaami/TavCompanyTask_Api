@@ -1,5 +1,4 @@
-﻿using Common;
-using Data.Repositories;
+﻿using Data.Repositories;
 using Entities.Models.Roles;
 using Entities.Models.User;
 using Microsoft.Extensions.Options;
@@ -8,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Entities.ViewModels;
 
 namespace Services.Interfaces.Services
 {

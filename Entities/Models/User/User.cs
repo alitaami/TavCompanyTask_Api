@@ -39,6 +39,6 @@ namespace Entities.Models.User
 
         //Relations 
         public virtual List<UserRoles> UserRoles { get; set; }
-        public virtual NewsReceiver NewsReceiver { get; set; }
+        //public virtual NewsReceiver NewsReceiver { get; set; }
     }
 }

@@ -151,7 +151,7 @@ namespace Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ایمیل ها ارسال شدند.
+        ///   Looks up a localized string similar to ایمیل های اطلاع رسانی ارسال شدند.
         /// </summary>
         public static string EmailsSent {
             get {

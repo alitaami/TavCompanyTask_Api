@@ -16,31 +16,31 @@ namespace Services.Services
     public class AdminService : ServiceBase<AdminService>, IAdminService
     {
         private IRepository<User> _repo;
-        private IRepository<NewsReceiver> _repoNR;
+        //private IRepository<NewsReceiver> _repoNR;
         private IRepository<UserRoles> _repoUR;
         private IRepository<Role> _repoR;
         private IUserService _userService;
         private IBackgroundJobsService _backgroundJobsService;
-        public AdminService(IBackgroundJobsService backgroundJobsService, IUserService userService, ILogger<AdminService> logger, IRepository<NewsReceiver> repoNR, IRepository<User> repository, IRepository<UserRoles> repoUR, IRepository<Role> repoR) : base(logger)
+        public AdminService(IBackgroundJobsService backgroundJobsService, IUserService userService, ILogger<AdminService> logger,/* IRepository<NewsReceiver> repoNR,*/ IRepository<User> repository, IRepository<UserRoles> repoUR, IRepository<Role> repoR) : base(logger)
         {
             _backgroundJobsService = backgroundJobsService;
             _repo = repository;
             _repoUR = repoUR;
             _repoR = repoR;
-            _repoNR = repoNR;
+            //_repoNR = repoNR;
             _userService = userService;
         }
 
-        public async Task<ServiceResult> AddUsersToReceiverList(int userId, CancellationToken cancellationToken)
+        /* public async Task<ServiceResult> AddUsersToReceiverList(int userId, CancellationToken cancellationToken)
         {
             try
             {
                 var check = _repoNR.TableNoTracking.Where(x => x.UserId == userId);
                 var check1 = _repo.TableNoTracking.Where(x => x.Id == userId);
-                 
+
                 if (check.Any())
                     return BadRequest(ErrorCodeEnum.DuplicateError, Resource.IsExists, null);
-                
+
                 if (!check1.Any())
                     return BadRequest(ErrorCodeEnum.DuplicateError, Resource.NotFound, null);
 
@@ -66,17 +66,17 @@ namespace Services.Services
                 return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain, null);
 
             }
-        }
-        public async Task<ServiceResult> SendEmailInBackground(string subject, string body,CancellationToken cancellationToken)
+        } */
+        public async Task<ServiceResult> SendEmailInBackground(string subject, string body, List<int> receptionists, CancellationToken cancellationToken)
         {
             try
             {
-                var users = _userService.GetNewsUsers();
+                //var users = _userService.GetUsers();
 
-                if (users.Result.Count == 0)
+                if (receptionists.Count == 0)
                     return BadRequest(ErrorCodeEnum.BadRequest, Resource.NewsReceiverError, null);///
 
-                await _backgroundJobsService.SendEmailsToUsersInBackground(subject, body,cancellationToken);
+                await _backgroundJobsService.SendEmailsToUsersInBackground(subject, body, receptionists, cancellationToken);
 
                 return Ok(Resource.EmailsSent);
             }
