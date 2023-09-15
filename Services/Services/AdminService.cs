@@ -39,16 +39,17 @@ namespace Services.Services
             try
             {
                 var key = Resource.CacheKeyOfReceivers;
-                var users = _cache.GetReceiversFromCache(key);
+                var cacheData = _cache.GetDataFromCache(key);
                 var records = new List<EmailRecord>();
 
                 // checking => are there any related data in cache?
-                if (users.Result is null)
+                if (cacheData.Result is null)
                 {
+                    var data = await _userService.GetEmailRecordsId();
                     var res = await _userService.GetEmailRecords();
 
                     // adding them to cache
-                    await _cache.AddReceiversToCache(res);
+                    await _cache.AddDataToCache(data,key);
 
                     if (res is null)
                         return NotFound(ErrorCodeEnum.NotFound, Resource.EmailRecordNull, null);///
@@ -57,7 +58,7 @@ namespace Services.Services
                 }
                 else
                 {
-                    foreach (var id in users.Result)
+                    foreach (var id in cacheData.Result)
                     {
                         int emailRecordId = int.Parse(id);
                         var res = _userService.GetEmailRecordById(emailRecordId);

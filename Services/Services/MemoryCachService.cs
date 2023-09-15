@@ -25,27 +25,26 @@ namespace Services.Services
             _cache = cache;
             _cacheSettings = cacheSettings.Value;
         }
-        public async Task AddReceiversToCache(List<EmailRecord> item)
+        public async Task  AddDataToCache(List<string> item,string key)
         {
             try
-            {
-                var key = Resource.CacheKeyOfReceivers;
-                var existingReceivers = await _cache.GetStringAsync(key);
+            { 
+                var existingData = await _cache.GetStringAsync(key);
 
-                HashSet<string> existingUsers;
+                HashSet<string> res;
 
-                if (string.IsNullOrEmpty(existingReceivers))
+                if (string.IsNullOrEmpty(existingData))
                 {
-                    existingUsers = new HashSet<string>();
+                    res = new HashSet<string>();
                 }
                 else
                 {
-                    existingUsers = JsonConvert.DeserializeObject<HashSet<string>>(existingReceivers);
+                    res = JsonConvert.DeserializeObject<HashSet<string>>(existingData);
                 }
-                foreach (var user in item)
+                foreach (var i in item)
                 {
-                    if (!existingUsers.Contains((user.Id).ToString()))
-                        existingUsers.Add((user.Id).ToString());
+                    if (!res.Contains(i))
+                        res.Add(i);
                 }
                 var options = new DistributedCacheEntryOptions
                 {
@@ -53,9 +52,8 @@ namespace Services.Services
                 };
 
                 // Serialize the HashSet to JSON before storing it
-                var serializedOnlineUsers = JsonConvert.SerializeObject(existingUsers);
+                var serializedOnlineUsers = JsonConvert.SerializeObject(res);
                 await _cache.SetStringAsync(key, serializedOnlineUsers, options);
-
             }
             catch (Exception ex)
             {
@@ -63,27 +61,27 @@ namespace Services.Services
             }
         }
 
-        public async Task<List<string>> GetReceiversFromCache(string key)
+        public async Task<List<string>> GetDataFromCache(string key)
         {
             try
             { 
-                var existingReceivers = await _cache.GetStringAsync(key);
+                var Data = await _cache.GetStringAsync(key);
 
-                HashSet<string> existingUsers;
+                HashSet<string> existingData;
 
-                if (string.IsNullOrEmpty(existingReceivers))
+                if (string.IsNullOrEmpty(Data))
                 {
-                    existingUsers = new HashSet<string>();
+                    existingData = new HashSet<string>();
                 }
                 else
                 {
-                    existingUsers = JsonConvert.DeserializeObject<HashSet<string>>(existingReceivers);
+                    existingData = JsonConvert.DeserializeObject<HashSet<string>>(Data);
                 }
 
-                if (!existingUsers.Any())
+                if (!existingData.Any())
                     return null;
                     
-                    return existingUsers.ToList(); 
+                    return existingData.ToList(); 
             }
             catch (Exception ex)
             {

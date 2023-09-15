@@ -97,14 +97,33 @@ namespace Services.Services
             }
         }
 
+        public async Task<List<string>> GetEmailRecordsId()
+        {
+            try
+            {
+                var emailReceivers = _repoER.TableNoTracking.Select(x=>x.Id.ToString()).ToList();
+
+                if (emailReceivers != null)
+                    return emailReceivers;
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, null, null);
+
+                throw new Exception(Resource.GeneralErrorTryAgain);
+            }
+        }
+
         public async Task<List<EmailRecord>> GetEmailRecords()
         {
             try
             {
-                var emailReceivers = _repoER.TableNoTracking.ToList();
+                var records = _repoER.TableNoTracking.ToList();
 
-                if (emailReceivers != null)
-                    return emailReceivers;
+                if (records != null)
+                    return records;
                 else
                     return null;
             }

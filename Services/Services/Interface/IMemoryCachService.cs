@@ -9,7 +9,7 @@ namespace Services.Services.Interface
 {
     public interface IMemoryCachService
     {
-        public Task AddReceiversToCache(List<EmailRecord> item);
-        public Task<List<string>> GetReceiversFromCache(string key);
+        public Task AddDataToCache(List<string> item, string key);
+        public Task<List<string>> GetDataFromCache(string key);
     }
 }

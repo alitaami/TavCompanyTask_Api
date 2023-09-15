@@ -14,6 +14,7 @@ namespace Services.Services.Interface
         public Task<User> GetUserByUserId(int id);
         public Task<EmailRecord> GetEmailRecordById(int id);
         public Task<List<User>> GetUsers();
+        public Task<List<string>> GetEmailRecordsId();
         public Task<List<EmailRecord>> GetEmailRecords();
     }
 }
