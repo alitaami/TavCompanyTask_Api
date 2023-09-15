@@ -65,7 +65,9 @@ namespace WebFramework.Configuration
                 SetupNlog(builder);
 
                 AddAppDbContext(builder, configuration);
-                 
+
+                AddRedisDb(builder, configuration);
+
                 AddHangFire(builder, configuration);
 
                 AddMvcAndJsonOptions(builder);
@@ -73,6 +75,8 @@ namespace WebFramework.Configuration
                 AddMinimalMvc(builder);
 
                 AddAppServices(builder);
+
+                AddCors(builder);
 
                 //AddCustomApiVersioning(builder);
 
@@ -98,7 +102,13 @@ namespace WebFramework.Configuration
             builder.Logging.AddNLogWeb();
             builder.Host.UseNLog();
         }
+        public static void AddRedisDb(WebApplicationBuilder builder, IConfiguration configuration)
+        {
 
+            var cacheSettingConfiguration = builder.Configuration.GetSection("CacheSettings");
+            builder.Services.Configure<CacheSettings>(cacheSettingConfiguration);
+
+        }
         private static void AddAppDbContext(WebApplicationBuilder builder, IConfiguration configuration)
         {
             builder.Services.AddDbContext<TavContext>(options =>
@@ -204,7 +214,7 @@ namespace WebFramework.Configuration
                         }
                     }
 
-                }); 
+                });
                 #endregion
 
                 //#region Add Jwt Authentication
@@ -504,13 +514,13 @@ namespace WebFramework.Configuration
         private static void AddAppServices(WebApplicationBuilder builder)
         {
 
-            //builder.Services.AddDistributedMemoryCache();
-            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            //builder.Services.AddScoped<IAdvertiseService, AdvertiseService>();
-            builder.Services.AddScoped<IAccountService, AccountService>();
-            builder.Services.AddScoped<IJwtService, JwtService>();
-            builder.Services.AddScoped<IAdminService, AdminService>();
-            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            builder.Services.AddTransient<IAccountService, AccountService>();
+            builder.Services.AddTransient<IJwtService, JwtService>();
+            builder.Services.AddTransient<IAdminService, AdminService>();
+            builder.Services.AddTransient<IUserService, UserService>();
+            builder.Services.AddTransient<IMemoryCachService, MemoryCachService>();
             builder.Services.AddSingleton<SendMail>();
             builder.Services.Configure<Common.Utilities.EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             //builder.Services.AddTransient<IMemoryService, MemoryService>();
@@ -522,7 +532,18 @@ namespace WebFramework.Configuration
                 options.AllowSynchronousIO = true;
             });
         }
-
+        private static void AddCors(WebApplicationBuilder builder)
+        {
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
+        }
         private static void AddAppHsts(WebApplicationBuilder builder)
         {
             builder.Services.AddHsts(options =>

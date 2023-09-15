@@ -1,6 +1,7 @@
 ﻿using Common.Resources;
 using Data.Repositories;
 using Entities.Base;
+using Entities.Models;
 using Entities.Models.Roles;
 using Entities.Models.User;
 using Microsoft.EntityFrameworkCore;
@@ -21,10 +22,12 @@ namespace Services.Services
         private IRepository<User> _repo;
         private IRepository<UserRoles> _repoUR;
         private IRepository<Role> _repoR;
+        private IRepository<EmailRecord> _repoER;
         //private IRepository<NewsReceiver> _repoNR;
         private readonly IJwtService _jwtService;
-        public UserService(/*IRepository<NewsReceiver> repoNR,*/ ILogger<UserService> logger, IRepository<User> repository, IJwtService jwtService, IRepository<UserRoles> repoUR, IRepository<Role> repoR) : base(logger)
+        public UserService(IRepository<EmailRecord> repoER,/*IRepository<NewsReceiver> repoNR,*/ ILogger<UserService> logger, IRepository<User> repository, IJwtService jwtService, IRepository<UserRoles> repoUR, IRepository<Role> repoR) : base(logger)
         {
+            _repoER = repoER;
             _repo = repository;
             _repoUR = repoUR;
             _repoR = repoR;
@@ -60,7 +63,50 @@ namespace Services.Services
             {
                 var users = _repo.TableNoTracking.ToList();
 
-                return users;
+                if (users != null)
+                    return users;
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, null, null);
+
+                throw new Exception(Resource.GeneralErrorTryAgain);
+            }
+        }
+
+        public Task<EmailRecord> GetEmailRecordById(int id)
+        {
+            try
+            {
+                var user = _repoER.TableNoTracking
+                    .Where(x => x.Id == id)
+                    .FirstOrDefaultAsync();
+
+                if (user is null)
+                    return null;
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, null, null);
+
+                throw new Exception(Resource.GeneralErrorTryAgain);
+            }
+        }
+
+        public async Task<List<EmailRecord>> GetEmailRecords()
+        {
+            try
+            {
+                var emailReceivers = _repoER.TableNoTracking.ToList();
+
+                if (emailReceivers != null)
+                    return emailReceivers;
+                else
+                    return null;
             }
             catch (Exception ex)
             {

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace TavCompanyTask_Api.Controllers
 {
     /// <summary>
-    /// Controller for Admin
+    /// Controller for Admin ( RoleId = 1)
     /// </summary>
     /// 
     [Authorize(Roles = "1")]
@@ -29,7 +29,7 @@ namespace TavCompanyTask_Api.Controllers
         }
          
         /// <summary>
-        /// 
+        /// Send Email for receivers by their unique Id
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -43,5 +43,18 @@ namespace TavCompanyTask_Api.Controllers
             return APIResponse(result);
         }
 
+        /// <summary>
+        /// Get Email Records
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet] 
+        [ProducesResponseType(typeof(Ok), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResult), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApiResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetEmailRecordsList()
+        {
+            var result = await _adminService.GetEmailRecordsList();
+            return APIResponse(result);
+        } 
     }
 }

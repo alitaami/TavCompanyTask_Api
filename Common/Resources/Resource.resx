@@ -141,11 +141,17 @@
   <data name="AlreadyExists2" xml:space="preserve">
     <value>تلفن همراه ، نام کاربری ،ایمیل و یا کد املاک تکراریست!</value>
   </data>
+  <data name="CacheKeyOfReceivers" xml:space="preserve">
+    <value>Receivers</value>
+  </data>
   <data name="ConfirmVisit" xml:space="preserve">
     <value>تایید درخواست بازدید از ملک</value>
   </data>
   <data name="DaysExists" xml:space="preserve">
     <value>این روز برای آگهی شما ثبت شده است</value>
+  </data>
+  <data name="EmailRecordNull" xml:space="preserve">
+    <value>رکوردی برای نمایش وجود ندارد</value>
   </data>
   <data name="EmailsSent" xml:space="preserve">
     <value>ایمیل های اطلاع رسانی ارسال شدند</value>

@@ -133,6 +133,15 @@ namespace Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Receivers.
+        /// </summary>
+        public static string CacheKeyOfReceivers {
+            get {
+                return ResourceManager.GetString("CacheKeyOfReceivers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to تایید درخواست بازدید از ملک.
         /// </summary>
         public static string ConfirmVisit {
@@ -147,6 +156,15 @@ namespace Common.Resources {
         public static string DaysExists {
             get {
                 return ResourceManager.GetString("DaysExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to رکوردی برای نمایش وجود ندارد.
+        /// </summary>
+        public static string EmailRecordNull {
+            get {
+                return ResourceManager.GetString("EmailRecordNull", resourceCulture);
             }
         }
         

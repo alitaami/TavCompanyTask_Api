@@ -11,6 +11,7 @@ namespace Services.Services.Interface
     {
         //public Task<ServiceResult> AddUsersToReceiverList(int userId, CancellationToken cancellationToken);
         public Task<ServiceResult> SendEmailInBackground(string subject, string body,List<int> receptionists, CancellationToken cancellationToken);
+        public Task<ServiceResult> GetEmailRecordsList();
 
     }
 }

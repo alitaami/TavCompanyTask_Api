@@ -22,9 +22,11 @@ namespace Services.Services
         private readonly IUserService _userService;
         private readonly IRepository<EmailRecord> _RepoEmail;
         private readonly SendMail _sendMail;
+        private readonly IMemoryCachService _cache;
 
-        public BackgroundJobsService(SendMail sendMail, IRepository<EmailRecord> repoEmail, ILogger<BackgroundJobsService> logger, IUserService userService) : base(logger)
+        public BackgroundJobsService(IMemoryCachService memoryCach, SendMail sendMail, IRepository<EmailRecord> repoEmail, ILogger<BackgroundJobsService> logger, IUserService userService) : base(logger)
         {
+            _cache = memoryCach;
             _sendMail = sendMail;
             _userService = userService;
             _RepoEmail = repoEmail;
@@ -50,10 +52,9 @@ namespace Services.Services
                         {
                             var user = await _userService.GetUserByUserId(userId);
 
-                            if (user != null)
-                            {
-                                usersData.Add(userId, user.Email);
-                            }
+                            if (user != null) 
+                            usersData.Add(userId, user.Email);
+
                         }
                     }
 
@@ -69,7 +70,8 @@ namespace Services.Services
 
                     // Add email records to the database.
                     await _RepoEmail.AddRangeAsync(emailRecords, cancellationToken);
-                    
+                    // Add emailRecords to redis cache
+
                     // Enqueue the email sending tasks for this batch using Hangfire.
                     foreach (var userEmail in usersData.Values)
                     {

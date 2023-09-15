@@ -1,6 +1,7 @@
 ﻿using Common.Resources;
 using Data.Repositories;
 using Entities.Base;
+using Entities.Models;
 using Entities.Models.Roles;
 using Entities.Models.User;
 using Microsoft.Extensions.Logging;
@@ -21,14 +22,60 @@ namespace Services.Services
         private IRepository<Role> _repoR;
         private IUserService _userService;
         private IBackgroundJobsService _backgroundJobsService;
-        public AdminService(IBackgroundJobsService backgroundJobsService, IUserService userService, ILogger<AdminService> logger,/* IRepository<NewsReceiver> repoNR,*/ IRepository<User> repository, IRepository<UserRoles> repoUR, IRepository<Role> repoR) : base(logger)
+        private IMemoryCachService _cache;
+        public AdminService(IMemoryCachService memoryCach, IBackgroundJobsService backgroundJobsService, IUserService userService, ILogger<AdminService> logger,/* IRepository<NewsReceiver> repoNR,*/ IRepository<User> repository, IRepository<UserRoles> repoUR, IRepository<Role> repoR) : base(logger)
         {
+            _cache = memoryCach;
             _backgroundJobsService = backgroundJobsService;
             _repo = repository;
             _repoUR = repoUR;
             _repoR = repoR;
             //_repoNR = repoNR;
             _userService = userService;
+        }
+
+        public async Task<ServiceResult> GetEmailRecordsList()
+        {
+            try
+            {
+                var key = Resource.CacheKeyOfReceivers;
+                var users = _cache.GetReceiversFromCache(key);
+                var records = new List<EmailRecord>();
+
+                // checking => are there any related data in cache?
+                if (users.Result is null)
+                {
+                    var res = await _userService.GetEmailRecords();
+
+                    // adding them to cache
+                    await _cache.AddReceiversToCache(res);
+
+                    if (res is null)
+                        return NotFound(ErrorCodeEnum.NotFound, Resource.EmailRecordNull, null);///
+
+                    return Ok(res);
+                }
+                else
+                {
+                    foreach (var id in users.Result)
+                    {
+                        int emailRecordId = int.Parse(id);
+                        var res = _userService.GetEmailRecordById(emailRecordId);
+
+                        if (res is null)
+                            return NotFound(ErrorCodeEnum.NotFound, Resource.EmailRecordNull, null);///
+
+                        records.Add(res.Result);
+                    }
+                    return Ok(records);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, null, null);
+
+                return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain, null);
+            }
         }
 
         /* public async Task<ServiceResult> AddUsersToReceiverList(int userId, CancellationToken cancellationToken)
@@ -85,7 +132,6 @@ namespace Services.Services
                 _logger.LogError(ex, null, null);
 
                 return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain, null);
-
             }
         }
     }
