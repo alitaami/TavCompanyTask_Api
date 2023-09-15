@@ -5,9 +5,9 @@ First you should add-migration and update-database to create a Db in your local 
 
 You can use these data to login by swagger :
  
-username : admin                                 <== it has "Admin" role 
+username : admin                                                 <== it has "Admin" role 
 password : @Litaami1985
 ----
-username : ali                                   <== it has "User" role   
+username : ali                                                   <== it has "User" role   
 password : @Litaami1985
 ----
