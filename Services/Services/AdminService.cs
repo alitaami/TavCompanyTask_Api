@@ -59,9 +59,8 @@ namespace Services.Services
                 else
                 {
                     foreach (var id in cacheData.Result)
-                    {
-                        int emailRecordId = int.Parse(id);
-                        var res = _userService.GetEmailRecordById(emailRecordId);
+                    { 
+                        var res = _userService.GetEmailRecordById(int.Parse(id));
 
                         if (res is null)
                             return NotFound(ErrorCodeEnum.NotFound, Resource.EmailRecordNull, null);///
