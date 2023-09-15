@@ -113,7 +113,7 @@ namespace WebFramework.Configuration
         {
             builder.Services.AddDbContext<TavContext>(options =>
             {
-                options.UseSqlServer("Data Source =DESKTOP-96I4231; Initial Catalog=TavDB; Integrated Security=true;Trust Server Certificate=true;");
+                options.UseSqlServer("Data Source =.; Initial Catalog=TavDB; Integrated Security=true;Trust Server Certificate=true;");
             });
         }
 
@@ -124,7 +124,7 @@ namespace WebFramework.Configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(@"Data Source =DESKTOP-96I4231; Initial Catalog=TavDB;
+                .UseSqlServerStorage(@"Data Source =.; Initial Catalog=TavDB;
                 Integrated Security=true;Trust Server Certificate=true;"));
 
             // Configure Hangfire dashboard
@@ -508,8 +508,7 @@ namespace WebFramework.Configuration
 
         //        //options.ApiVersionReader = ApiVersionReader.Combine(new QueryStringApiVersionReader("api-version"), new UrlSegmentApiVersionReader())
         //        // combine of [querystring] & [urlsegment]
-        //    });
-
+        //    }); 
         //}
         private static void AddAppServices(WebApplicationBuilder builder)
         {
@@ -523,8 +522,6 @@ namespace WebFramework.Configuration
             builder.Services.AddTransient<IMemoryCachService, MemoryCachService>();
             builder.Services.AddSingleton<SendMail>();
             builder.Services.Configure<Common.Utilities.EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-            //builder.Services.AddTransient<IMemoryService, MemoryService>();
-            //builder.Services.AddTransient<ICountOnlineUsersService, CountOnlineUsersService>();
             //builder.Services.AddAutoMapper(typeof(WebApplication));
             builder.Services.AddScoped<IBackgroundJobsService, BackgroundJobsService>();
             builder.Services.Configure<IISServerOptions>(options =>
@@ -566,5 +563,4 @@ namespace WebFramework.Configuration
             }
         }
     }
-
 }
